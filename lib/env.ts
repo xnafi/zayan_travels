@@ -12,14 +12,27 @@ const envSchema = z.object({
   CONTACT_EMAIL: z.string().email("CONTACT_EMAIL must be a valid email"),
 });
 
-const parsed = envSchema.safeParse(process.env);
+let cachedEnv: z.infer<typeof envSchema> | null = null;
 
-if (!parsed.success) {
-  console.error(
-    "❌ Invalid environment variables:",
-    JSON.stringify(parsed.error.flatten().fieldErrors, null, 2)
-  );
-  throw new Error("Invalid environment variables");
+/**
+ * Lazily validates and returns environment variables.
+ * Validation happens on first access (at runtime), not at module load,
+ * so the build process can collect page data without throwing.
+ */
+export function getEnv(): z.infer<typeof envSchema> {
+  if (cachedEnv) return cachedEnv;
+
+  const parsed = envSchema.safeParse(process.env);
+
+  if (!parsed.success) {
+    console.error(
+      "❌ Invalid environment variables:",
+      JSON.stringify(parsed.error.flatten().fieldErrors, null, 2)
+    );
+    throw new Error("Invalid environment variables");
+  }
+
+  cachedEnv = parsed.data;
+  return cachedEnv;
 }
 
-export const env = parsed.data;

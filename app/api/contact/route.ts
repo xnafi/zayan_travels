@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { contactSchema } from "@/lib/validations/contact.schema";
-import { env } from "@/lib/env";
-
-const resend = new Resend(env.RESEND_API_KEY);
+import { getEnv } from "@/lib/env";
 
 // Simple in-memory rate limiting
 const rateLimit = new Map<string, { count: number; resetAt: number }>();
@@ -55,6 +53,8 @@ export async function POST(request: Request) {
     }
 
     const { fullName, email, phone, destinationCountry, message } = parsed.data;
+    const env = getEnv();
+    const resend = new Resend(env.RESEND_API_KEY);
 
     await resend.emails.send({
       from: "Zayan Travels <onboarding@resend.dev>",

@@ -1,4 +1,4 @@
-import { env } from "@/lib/env";
+import { getEnv } from "@/lib/env";
 
 export interface GoogleReview {
   authorName: string;
@@ -16,6 +16,7 @@ export interface GooglePlaceResult {
 }
 
 export async function fetchGoogleReviews(): Promise<GooglePlaceResult> {
+  const env = getEnv();
   const url = `https://places.googleapis.com/v1/places/${env.GOOGLE_PLACE_ID}`;
 
   const response = await fetch(url, {
