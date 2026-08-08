@@ -1,0 +1,38 @@
+name: Preview Deployment
+
+on:
+  pull_request:
+    branches: [develop, main]
+
+jobs:
+  deploy-preview:
+    name: Deploy to Vercel Preview
+    runs-on: ubuntu-latest
+    environment: preview
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - name: Deploy Preview
+        id: deploy
+        run: |
+          DEPLOY_URL=$(npx vercel deploy \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --env DATABASE_URL="${{ secrets.DATABASE_URL_PREVIEW }}" \
+            --env NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}" \
+            --env NEXTAUTH_URL="${{ steps.deploy.outputs.url }}" \
+            --yes 2>&1 | tail -1)
+          echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+      - name: Comment Preview URL on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `✅ **Preview deployed:** ${{ steps.deploy.outputs.url }}`
+            })
