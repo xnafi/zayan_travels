@@ -19,12 +19,15 @@ jobs:
       - name: Deploy Preview
         id: deploy
         run: |
-          DEPLOY_URL=$(npx vercel deploy \
+          npx vercel pull --yes --environment=preview \
             --token=${{ secrets.VERCEL_TOKEN }} \
-            --env DATABASE_URL="${{ secrets.DATABASE_URL_PREVIEW }}" \
-            --env NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}" \
-            --env NEXTAUTH_URL="${{ steps.deploy.outputs.url }}" \
-            --yes 2>&1 | tail -1)
+            --cwd .
+          npx vercel build --yes \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --cwd .
+          DEPLOY_URL=$(npx vercel deploy --prebuilt \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --cwd . 2>&1 | tail -1)
           echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
       - name: Comment Preview URL on PR
         uses: actions/github-script@v7
