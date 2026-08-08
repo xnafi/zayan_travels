@@ -1,0 +1,703 @@
+# Project Brief: Zayan Travels — Visa Agency Website
+
+You are a senior full-stack engineer in 2026. Build a production-ready visa agency website for **Zayan Travels** using the stack and architecture defined below. Write clean, typed, scalable code with no placeholders.
+
+---
+
+## 🧱 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16.2.3 (App Router, stable) |
+| Language | TypeScript 5.x (strict mode) |
+| Styling | Tailwind CSS v4 + CSS custom properties |
+| Animation | Framer Motion v12 |
+| Auth | NextAuth.js v5 (credentials provider for admin) |
+| Database | PostgreSQL via Prisma ORM v6 |
+| File Upload | Uploadthing v7 (service images) |
+| Form Handling | React Hook Form v8 + Zod v4 |
+| State | Zustand v5 (client state) + React Query v6 (server state) |
+| Email | Resend SDK (contact form) |
+| Maps/Reviews | Google Places API (New) — Place Details |
+| Deployment target | Vercel (Edge-compatible) |
+
+---
+
+## 📁 Project Structure
+
+```
+zayan-travels/
+├── app/
+│   ├── (site)/                      # Public routes group
+│   │   ├── page.tsx                 # Landing page (hero, features, reviews, CTA)
+│   │   ├── about/page.tsx
+│   │   ├── services/page.tsx        # Public services listing
+│   │   ├── contact/page.tsx
+│   │   └── layout.tsx               # Shared navbar + footer
+│   ├── (admin)/                     # Admin routes group
+│   │   ├── dashboard/page.tsx
+│   │   ├── dashboard/services/page.tsx   # CRUD for services
+│   │   ├── dashboard/services/new/page.tsx
+│   │   ├── dashboard/services/[id]/edit/page.tsx
+│   │   └── layout.tsx               # Auth-protected layout
+│   ├── api/
+│   │   ├── auth/[...nextauth]/route.ts
+│   │   ├── services/route.ts        # GET all, POST new
+│   │   ├── services/[id]/route.ts   # GET one, PATCH, DELETE
+│   │   ├── contact/route.ts         # Send email via Resend
+│   │   └── reviews/route.ts         # Proxy Google Places API
+│   ├── globals.css
+│   └── layout.tsx                   # Root layout
+├── components/
+│   ├── site/
+│   │   ├── Navbar.tsx
+│   │   ├── Footer.tsx
+│   │   ├── HeroSection.tsx
+│   │   ├── ServicesSection.tsx
+│   │   ├── ReviewsCarousel.tsx      # Google Maps reviews
+│   │   ├── AboutSection.tsx
+│   │   └── ContactForm.tsx
+│   ├── admin/
+│   │   ├── ServiceForm.tsx
+│   │   ├── ServiceTable.tsx
+│   │   └── Sidebar.tsx
+│   └── ui/                          # Shared primitives (Button, Input, Card, Badge, Modal)
+├── lib/
+│   ├── prisma.ts                    # Prisma client singleton
+│   ├── auth.ts                      # NextAuth config
+│   ├── validations/
+│   │   ├── service.schema.ts        # Zod schema
+│   │   └── contact.schema.ts
+│   ├── google-places.ts             # Google Places API helper
+│   └── utils.ts                     # cn(), formatDate(), etc.
+├── prisma/
+│   ├── schema.prisma
+│   └── seed.ts
+├── public/
+│   └── og-image.png
+├── middleware.ts                    # Protect /dashboard routes
+├── next.config.ts
+├── tailwind.config.ts
+└── .env.local.example
+```
+
+---
+
+## 🗄️ Database Schema (Prisma)
+
+```prisma
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String
+  content     String   @db.Text    // Rich text / markdown
+  icon        String?              // Lucide icon name
+  imageUrl    String?
+  featured    Boolean  @default(false)
+  published   Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String                // bcrypt hashed
+  name      String?
+  createdAt DateTime @default(now())
+}
+```
+
+---
+
+## 🌐 Public Website Sections
+
+### 1. Landing Page (`/`)
+
+Build a single-page layout with smooth scroll anchors:
+
+**Hero Section**
+- Full-viewport height
+- Headline: *"Your Journey to the World Starts Here"*
+- Subtext: *"Zayan Travels — Expert visa consulting for 50+ countries"*
+- Two CTAs: "Explore Services" (primary) + "Contact Us" (outline)
+- Subtle animated background: floating passport stamps or world map SVG with Framer Motion
+- Scroll indicator arrow
+
+**Why Choose Us** (3–4 icon cards)
+- Fast Processing, Expert Guidance, High Success Rate, 24/7 Support
+
+**Services Preview** (fetched from DB, published only, max 6)
+- Card grid with service title, short description, icon, and "Learn More" link
+
+**Google Reviews Section**
+- Pull via `/api/reviews` which proxies Google Places API (New)
+- Display: reviewer name, star rating, relative date, text (truncated to 180 chars)
+- Auto-scrolling carousel (Framer Motion drag-to-scroll + autoplay)
+- "Powered by Google" badge (required by Google branding policy)
+
+**CTA Banner**
+- "Ready to Apply? Let's Make It Happen" with contact button
+
+### 2. About Page (`/about`)
+- Agency story, founding year, mission statement
+- Team section (static, hardcoded for now with placeholder avatars)
+- Stats: countries covered, visas processed, years of experience
+
+### 3. Services Page (`/services`)
+- Dynamic grid fetched from DB (`published: true`, sorted by `order`)
+- Each card: icon, title, description, CTA to contact
+- No individual service detail pages needed (simplified scope)
+
+### 4. Contact Page (`/contact`)
+- Fields: Full Name, Email, Phone, Country of Destination, Message
+- Zod validation on both client (RHF) and server (API route)
+- On submit → POST `/api/contact` → Resend email to agency inbox
+- Success toast, error handling, rate limiting via Vercel KV or simple in-memory
+
+---
+
+## 🔐 Admin Dashboard (`/dashboard`)
+
+**Auth**
+- NextAuth.js v5 Credentials provider
+- Passwords hashed with bcrypt (12 rounds)
+- Session stored in JWT (httpOnly cookie)
+- `middleware.ts` protects all `/dashboard/*` routes — redirect to `/login` if unauthenticated
+- Simple `/login` page (email + password)
+
+**Dashboard Home**
+- Stats cards: Total Services, Published, Drafts
+- Quick-action buttons
+
+**Services CRUD**
+- List table: title, status (published badge), order, created date, actions (Edit / Delete)
+- New Service form fields:
+  - Title (auto-generates slug)
+  - Short Description (max 160 chars)
+  - Content (textarea — markdown)
+  - Icon (select from preset Lucide icons list)
+  - Image Upload (Uploadthing)
+  - Featured toggle
+  - Published toggle
+  - Display Order (number)
+- Edit page pre-fills form
+- Delete with confirmation modal
+- Drag-to-reorder rows (optional, use `@dnd-kit/core`)
+- All mutations use optimistic updates via React Query
+
+---
+
+## 🌍 Google Reviews Integration
+
+```ts
+// lib/google-places.ts
+// Use Google Places API (New) — place details with reviews field
+// Endpoint: GET https://places.googleapis.com/v1/places/{PLACE_ID}
+// Headers: X-Goog-Api-Key, X-Goog-FieldMask: reviews,rating,userRatingCount
+
+// /api/reviews/route.ts
+// Cache response for 6 hours using Next.js fetch cache:
+// fetch(url, { next: { revalidate: 21600 } })
+// Return: { reviews: Review[], rating: number, totalRatings: number }
+```
+
+`.env.local` keys needed:
+```
+GOOGLE_PLACES_API_KEY=
+GOOGLE_PLACE_ID=           # Your agency's Google Maps Place ID
+```
+
+---
+
+## ⚙️ API Routes Design
+
+| Method | Route | Auth | Description |
+|---|---|---|---|
+| GET | `/api/services` | Public | All published services |
+| POST | `/api/services` | Admin | Create service |
+| GET | `/api/services/[id]` | Admin | Single service |
+| PATCH | `/api/services/[id]` | Admin | Update service |
+| DELETE | `/api/services/[id]` | Admin | Delete service |
+| POST | `/api/contact` | Public | Send contact email |
+| GET | `/api/reviews` | Public | Cached Google reviews |
+
+All API routes:
+- Return consistent `{ success, data, error }` shape
+- Use Zod to parse request body; return 400 with field errors on failure
+- Admin routes verify session via `auth()` from NextAuth; return 401 if missing
+
+---
+
+## 🎨 Design System
+
+**Brand Palette**
+```css
+--brand-primary: #1B4FD8;      /* Deep royal blue — trust, authority */
+--brand-secondary: #F59E0B;    /* Warm amber — energy, optimism */
+--brand-dark: #0F172A;         /* Near-black slate */
+--brand-surface: #F8FAFC;      /* Off-white background */
+--brand-muted: #64748B;        /* Secondary text */
+```
+
+**Typography**
+- Display: `Plus Jakarta Sans` (bold headings)
+- Body: `Inter` (readable paragraphs)
+- Load via `next/font/google`
+
+**Component Conventions**
+- All `ui/` components accept a `className` prop for overrides
+- Use `cva` (class-variance-authority) for variant-based components (Button, Badge)
+- Consistent spacing scale from Tailwind (no arbitrary values unless necessary)
+
+---
+
+## ✅ Code Quality Requirements
+
+- `"use client"` only where necessary — default to React Server Components
+- All data fetching in server components or API routes (no client-side fetching of sensitive data)
+- `loading.tsx` and `error.tsx` for each route segment
+- `generateMetadata()` on every public page (title, description, OG image)
+- Responsive: mobile-first, tested at 375px, 768px, 1280px
+- Accessibility: semantic HTML, ARIA labels on interactive elements, keyboard nav
+- Environment variables validated at startup with Zod (`lib/env.ts`)
+- No `any` types — use proper interfaces and generics throughout
+- ESLint + Prettier configured, husky pre-commit hook
+
+---
+
+## 📋 Completion & Commit Rules
+
+- **Complete every section** — no placeholders, stubs, or TODO markers left behind. Every section of the project brief must be fully implemented before moving on.
+- **Complete every page** — every route (public, admin, API) must be fully functional, responsive, and accessible. No page may be left as a shell or skeleton.
+- **Complete every function** — every function, hook, and component must have a real, working implementation with proper types, error handling, and edge cases covered.
+- **15-word commits** — every git commit message must be exactly 15 words or fewer, concise and descriptive of the change (e.g., `feat: add service CRUD with optimistic updates`).
+- **Verify before commit** — run lint, type-check, and tests before committing; never commit broken or incomplete work.
+- **One feature per commit** — keep commits focused and atomic; do not bundle unrelated changes together.
+
+---
+
+## 🚀 Deployment Checklist
+
+- `next.config.ts`: configure image domains (Uploadthing CDN, Google user content)
+- Vercel environment variables set for all `.env.local.example` keys
+- `prisma generate` runs in Vercel build command: `prisma generate && next build`
+- Seed script creates default admin user
+- `robots.txt` and `sitemap.xml` via `app/robots.ts` and `app/sitemap.ts`
+
+---
+
+## 📦 Key Dependencies
+
+```json
+{
+  "dependencies": {
+    "next": "16.2.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.7.0",
+    "@prisma/client": "^6.0.0",
+    "next-auth": "^5.0.0",
+    "bcryptjs": "^3.0.0",
+    "zod": "^4.0.0",
+    "react-hook-form": "^8.0.0",
+    "@hookform/resolvers": "^5.0.0",
+    "framer-motion": "^12.0.0",
+    "uploadthing": "^7.0.0",
+    "@uploadthing/react": "^7.0.0",
+    "resend": "^4.0.0",
+    "zustand": "^5.0.0",
+    "@tanstack/react-query": "^6.0.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^3.0.0",
+    "lucide-react": "^0.500.0",
+    "@dnd-kit/core": "^6.3.0",
+    "slugify": "^1.6.6"
+  },
+  "devDependencies": {
+    "prisma": "^6.0.0",
+    "tailwindcss": "^4.0.0",
+    "@types/bcryptjs": "^2.4.6"
+  }
+}
+```
+
+---
+
+Start by generating: `prisma/schema.prisma`, `lib/env.ts`, `lib/auth.ts`, `middleware.ts`, then the public layout and landing page components in order.
+
+---
+
+## 🔄 CI/CD Pipeline
+
+### Strategy
+- **Platform:** GitHub Actions
+- **Environments:** `development` → `preview` (per PR) → `production` (main branch)
+- **Hosting:** Vercel (production + preview deployments)
+- **Registry:** GitHub Container Registry (optional, for Docker-based jobs)
+
+---
+
+### Branch Strategy (GitFlow simplified)
+
+```
+main          → auto-deploys to production (vercel --prod)
+develop       → integration branch, deploys to staging preview
+feat/*        → PR to develop → triggers CI checks + Vercel preview URL
+fix/*         → PR to develop or main depending on severity
+release/*     → bump version, merge to main + tag
+```
+
+---
+
+### GitHub Actions Workflows
+
+#### 1. `ci.yml` — Runs on every PR and push to `develop`/`main`
+
+```yaml
+# .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint-and-type-check:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run type-check        # tsc --noEmit
+
+  test:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+    needs: lint-and-type-check
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: zayan_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://test:test@localhost:5432/zayan_test
+      NEXTAUTH_SECRET: ci-secret-do-not-use
+      NEXTAUTH_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - run: npx prisma migrate deploy
+      - run: npm test -- --coverage     # Vitest
+
+  build:
+    name: Build Check
+    runs-on: ubuntu-latest
+    needs: lint-and-type-check
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL_CI }}
+      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+      NEXTAUTH_URL: http://localhost:3000
+      GOOGLE_PLACES_API_KEY: placeholder
+      GOOGLE_PLACE_ID: placeholder
+      UPLOADTHING_SECRET: placeholder
+      RESEND_API_KEY: placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npm run build
+```
+
+---
+
+#### 2. `preview.yml` — Vercel Preview per PR
+
+```yaml
+# .github/workflows/preview.yml
+name: Preview Deployment
+
+on:
+  pull_request:
+    branches: [develop, main]
+
+jobs:
+  deploy-preview:
+    name: Deploy to Vercel Preview
+    runs-on: ubuntu-latest
+    environment: preview
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - name: Deploy Preview
+        id: deploy
+        run: |
+          DEPLOY_URL=$(npx vercel deploy \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --env DATABASE_URL="${{ secrets.DATABASE_URL_PREVIEW }}" \
+            --env NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}" \
+            --env NEXTAUTH_URL="${{ steps.deploy.outputs.url }}" \
+            --yes 2>&1 | tail -1)
+          echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+      - name: Comment Preview URL on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `✅ **Preview deployed:** ${{ steps.deploy.outputs.url }}`
+            })
+```
+
+---
+
+#### 3. `deploy.yml` — Production Deploy on merge to `main`
+
+```yaml
+# .github/workflows/deploy.yml
+name: Production Deployment
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  migrate:
+    name: Run DB Migrations
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL_PROD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - run: npx prisma migrate deploy
+
+  deploy-production:
+    name: Deploy to Vercel Production
+    runs-on: ubuntu-latest
+    needs: migrate
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - run: npx vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
+
+  notify:
+    name: Slack / Discord Notify
+    runs-on: ubuntu-latest
+    needs: deploy-production
+    if: always()
+    steps:
+      - name: Notify on success
+        if: needs.deploy-production.result == 'success'
+        run: |
+          curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
+          -H 'Content-type: application/json' \
+          -d '{"text":"✅ *Zayan Travels* deployed to production successfully!"}'
+      - name: Notify on failure
+        if: needs.deploy-production.result == 'failure'
+        run: |
+          curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
+          -H 'Content-type: application/json' \
+          -d '{"text":"❌ *Zayan Travels* production deployment FAILED. Check GitHub Actions."}'
+```
+
+---
+
+#### 4. `release.yml` — Semantic Versioning + Changelog
+
+```yaml
+# .github/workflows/release.yml
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Add `release.config.js`:
+```js
+// release.config.js
+export default {
+  branches: ['main'],
+  plugins: [
+    '@semantic-release/commit-analyzer',
+    '@semantic-release/release-notes-generator',
+    '@semantic-release/changelog',
+    '@semantic-release/github',
+    ['@semantic-release/git', {
+      assets: ['CHANGELOG.md', 'package.json'],
+      message: 'chore(release): ${nextRelease.version} [skip ci]'
+    }]
+  ]
+}
+```
+
+---
+
+### GitHub Repository Setup
+
+**Branch Protection Rules** (set in repo Settings → Branches):
+- `main`: require PR, require CI pass, no force push, require 1 approving review
+- `develop`: require CI pass, no force push
+
+**Required GitHub Secrets:**
+
+| Secret | Description |
+|---|---|
+| `VERCEL_TOKEN` | Vercel personal access token |
+| `VERCEL_ORG_ID` | From `vercel link` |
+| `VERCEL_PROJECT_ID` | From `vercel link` |
+| `DATABASE_URL_CI` | CI test DB connection string |
+| `DATABASE_URL_PREVIEW` | Preview env DB |
+| `DATABASE_URL_PROD` | Production DB |
+| `NEXTAUTH_SECRET` | Shared across envs |
+| `GOOGLE_PLACES_API_KEY` | Google Places API |
+| `UPLOADTHING_SECRET` | Uploadthing |
+| `RESEND_API_KEY` | Resend email |
+| `SLACK_WEBHOOK_URL` | Deploy notifications |
+
+---
+
+### Testing Setup (Vitest)
+
+```ts
+// vitest.config.ts
+import { defineConfig } from 'vitest/config'
+import react from '@vitejs/plugin-react'
+import tsconfigPaths from 'vite-tsconfig-paths'
+
+export default defineConfig({
+  plugins: [react(), tsconfigPaths()],
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./tests/setup.ts'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      thresholds: { lines: 70, functions: 70, branches: 60 }
+    }
+  }
+})
+```
+
+Write tests for:
+- `lib/validations/*.schema.ts` — Zod schema unit tests
+- `app/api/services/route.ts` — API route integration tests (with Prisma mock)
+- `components/site/ContactForm.tsx` — form validation behavior (React Testing Library)
+
+---
+
+### `package.json` Scripts
+
+```json
+{
+  "scripts": {
+    "dev": "next dev --turbo",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "prepare": "husky"
+  }
+}
+
+### Husky Pre-commit Hooks
+
+```bash
+# .husky/pre-commit
+npm run lint
+npm run type-check
+```
+
+```bash
+# .husky/commit-msg
+npx --no -- commitlint --edit "$1"
+```
+
+`commitlint.config.ts`:
+```ts
+export default { extends: ['@commitlint/config-conventional'] }
+```
+
+---
+
+## ✅ Execution Priority
+
+When implementing this project, follow this order first before expanding the rest of the app:
+
+1. `prisma/schema.prisma`
+2. `lib/env.ts`
+3. `lib/auth.ts`
+4. `middleware.ts`
+5. Public layout and landing page components
+
+Always preserve the stack, architecture, and quality requirements defined above.
