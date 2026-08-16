@@ -1,3 +1,11 @@
+# [1.1.0](https://github.com/xnafi/zayan_travels/compare/v1.0.0...v1.1.0) (2026-08-16)
+
+
+### Features
+
+* add scroll motion effects and progress bar to site layout ([1e55655](https://github.com/xnafi/zayan_travels/commit/1e556555b325ce295b07e2fe826dbe43080601a9))
+* update brand colors and fonts, adjust layout and scrollbar styles ([eb0a4be](https://github.com/xnafi/zayan_travels/commit/eb0a4be1ed208c1a0cd6e122ea993048c096cb3e))
+
 # 1.0.0 (2026-08-08)
 
 
