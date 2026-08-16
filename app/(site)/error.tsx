@@ -18,7 +18,7 @@ export default function SiteError({
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 px-4 text-center">
       <AlertTriangle className="h-12 w-12 text-brand-secondary" />
-      <h2 className="font-display text-2xl font-bold text-brand-dark">
+      <h2 className="font-display text-2xl font-bold text-brand-secondary">
         Something went wrong
       </h2>
       <p className="max-w-md text-brand-muted">

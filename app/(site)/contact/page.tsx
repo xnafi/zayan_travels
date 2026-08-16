@@ -33,7 +33,7 @@ const contactInfo = [
 
 export default function ContactPage() {
   return (
-    <div className="bg-brand-surface">
+    <div className="bg-brand-dark">
       <section className="bg-gradient-to-br from-brand-primary to-brand-dark py-20 text-white">
         <div className="container-page text-center">
           <h1 className="font-display text-4xl font-bold sm:text-5xl">
@@ -50,7 +50,7 @@ export default function ContactPage() {
         <div className="container-page">
           <div className="grid gap-12 lg:grid-cols-5">
             <div className="lg:col-span-2">
-              <h2 className="font-display text-2xl font-bold text-brand-dark">
+              <h2 className="font-display text-2xl font-bold text-brand-secondary">
                 Get in Touch
               </h2>
               <p className="mt-2 text-brand-muted">
@@ -65,7 +65,7 @@ export default function ContactPage() {
                       <info.icon className="h-5 w-5 text-brand-primary" />
                     </div>
                     <div>
-                      <h3 className="font-display text-sm font-semibold text-brand-dark">
+                      <h3 className="font-display text-sm font-semibold text-brand-secondary">
                         {info.title}
                       </h3>
                       {info.lines.map((line) => (
@@ -80,8 +80,8 @@ export default function ContactPage() {
             </div>
 
             <div className="lg:col-span-3">
-              <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-                <h2 className="font-display text-2xl font-bold text-brand-dark">
+              <div className="rounded-xl border border-brand-line bg-brand-surface p-6 shadow-sm sm:p-8">
+                <h2 className="font-display text-2xl font-bold text-brand-secondary">
                   Send Us a Message
                 </h2>
                 <p className="mt-2 text-brand-muted">
