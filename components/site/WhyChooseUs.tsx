@@ -1,64 +1,8 @@
+"use client";
+
+import { motion } from "framer-motion";
 import { Zap, ShieldCheck, Award, Headphones } from "lucide-react";
-import { Card } from "@/components/ui/Card";
 
-const features = [
-  {
-    icon: Zap,
-    title: "Fast Processing",
-    description:
-      "Expedited visa processing with priority handling to get you approved faster.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Expert Guidance",
-    description:
-      "Our certified visa consultants guide you through every step of the application.",
-  },
-  {
-    icon: Award,
-    title: "High Success Rate",
-    description:
-      "98% approval rate backed by meticulous document preparation and review.",
-  },
-  {
-    icon: Headphones,
-    title: "24/7 Support",
-    description:
-      "Round-the-clock assistance for all your visa and travel-related queries.",
-  },
-];
+const features = [{ icon: Zap, title: "Fast Processing", description: "Expedited handling to move your plans forward without unnecessary delays." }, { icon: ShieldCheck, title: "Expert Guidance", description: "Certified consultants who know the details behind every successful application." }, { icon: Award, title: "High Success Rate", description: "Meticulous preparation built around a 98% approval rate." }, { icon: Headphones, title: "24/7 Support", description: "A real person in your corner whenever your journey needs it." }];
 
-export function WhyChooseUs() {
-  return (
-    <section id="why-choose-us" className="bg-white py-20">
-      <div className="container-page">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl font-bold text-brand-dark sm:text-4xl">
-            Why Choose <span className="text-brand-primary">Zayan Travels</span>
-          </h2>
-          <p className="mt-4 text-lg text-brand-muted">
-            We combine expertise, technology, and personalized service to make
-            your visa application process seamless.
-          </p>
-        </div>
-
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {features.map((feature) => (
-            <Card
-              key={feature.title}
-              className="group p-6 transition-all hover:-translate-y-1 hover:shadow-lg"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-brand-primary/10 transition-colors group-hover:bg-brand-primary">
-                <feature.icon className="h-6 w-6 text-brand-primary transition-colors group-hover:text-white" />
-              </div>
-              <h3 className="mt-4 font-display text-lg font-semibold text-brand-dark">
-                {feature.title}
-              </h3>
-              <p className="mt-2 text-sm text-brand-muted">{feature.description}</p>
-            </Card>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+export function WhyChooseUs() { return <section id="why-choose-us" className="cinematic-section border-t border-brand-line py-24 sm:py-32"><div className="container-page"><div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between"><div><p className="eyebrow">The Zayan difference</p><h2 className="mt-4 max-w-2xl text-5xl font-medium leading-none text-brand-secondary sm:text-7xl">Travel is personal.<br /><em className="text-brand-primary">Your visa should be too.</em></h2></div><p className="max-w-sm text-sm leading-relaxed text-brand-muted">Precision, patience, and a clear point of view. We make a complicated process feel considered.</p></div><div className="mt-16 grid gap-px bg-brand-line sm:grid-cols-2 lg:grid-cols-4">{features.map((feature, index) => <motion.article key={feature.title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} transition={{ delay: index * .08 }} className="bg-brand-dark p-7"><feature.icon className="size-6 text-brand-primary" /><p className="mt-12 font-mono text-xs text-brand-primary/70">0{index + 1}</p><h3 className="mt-3 text-2xl font-medium text-brand-secondary">{feature.title}</h3><p className="mt-3 text-sm leading-relaxed text-brand-muted">{feature.description}</p></motion.article>)}</div></div></section>; }
