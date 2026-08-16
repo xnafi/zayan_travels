@@ -6,6 +6,7 @@ import { ServicesSection } from "@/components/site/ServicesSection";
 import { ReviewsCarousel } from "@/components/site/ReviewsCarousel";
 import { CTABanner } from "@/components/site/CTABanner";
 import { fetchGoogleReviews } from "@/lib/google-places";
+import { ScrollReveal } from "@/components/site/ScrollMotion";
 
 export const metadata: Metadata = {
   title: "Zayan Travels — Expert Visa Consulting",
@@ -30,17 +31,19 @@ export default async function HomePage() {
   return (
     <>
       <HeroSection />
-      <WhyChooseUs />
-      <AboutSection />
-      <ServicesSection />
+      <ScrollReveal><WhyChooseUs /></ScrollReveal>
+      <ScrollReveal direction="right"><AboutSection /></ScrollReveal>
+      <ScrollReveal direction="left"><ServicesSection /></ScrollReveal>
       {googleReviews && googleReviews.reviews.length > 0 && (
-        <ReviewsCarousel
-          reviews={googleReviews.reviews}
-          rating={googleReviews.rating}
-          totalRatings={googleReviews.totalRatings}
-        />
+        <ScrollReveal direction="left">
+          <ReviewsCarousel
+            reviews={googleReviews.reviews}
+            rating={googleReviews.rating}
+            totalRatings={googleReviews.totalRatings}
+          />
+        </ScrollReveal>
       )}
-      <CTABanner />
+      <ScrollReveal direction="up" delay={0.08}><CTABanner /></ScrollReveal>
     </>
   );
 }

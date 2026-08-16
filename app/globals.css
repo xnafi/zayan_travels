@@ -38,6 +38,8 @@
 ::-webkit-scrollbar-track { background: var(--brand-dark); }
 ::-webkit-scrollbar-thumb { background: var(--brand-primary); border-radius: 999px; }
 
+.scroll-progress { position: fixed; inset: 0 0 auto; z-index: 60; height: 2px; background: var(--brand-primary); pointer-events: none; will-change: transform; }
+
 @keyframes scroll-marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 .animate-marquee { animation: scroll-marquee 60s linear infinite; }
 .animate-marquee:hover { animation-play-state: paused; }
