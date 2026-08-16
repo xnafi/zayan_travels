@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/xnafi/zayan_travels/compare/v1.1.0...v1.2.0) (2026-08-16)
+
+
+### Features
+
+* update color themes across multiple pages ([5757d52](https://github.com/xnafi/zayan_travels/commit/5757d521755105c59b4035cae401a673c07ff878))
+
 # [1.1.0](https://github.com/xnafi/zayan_travels/compare/v1.0.0...v1.1.0) (2026-08-16)
 
 
