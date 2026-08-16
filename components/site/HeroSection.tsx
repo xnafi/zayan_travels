@@ -1,119 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ChevronDown, Globe2 } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { HeroDepth } from "@/components/site/ScrollMotion";
 
 export function HeroSection() {
-  return (
-    <section className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden bg-gradient-to-br from-brand-primary via-brand-primary/90 to-brand-dark">
-      {/* Animated background elements */}
-      <motion.div
-        className="pointer-events-none absolute inset-0"
-        aria-hidden="true"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.5 }}
-      >
-        <div className="absolute -left-20 top-20 h-72 w-72 rounded-full bg-brand-secondary/20 blur-3xl" />
-        <div className="absolute -right-20 bottom-20 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
-        <Globe2 className="absolute right-10 top-10 h-24 w-24 text-white/10" />
-        <Globe2 className="absolute bottom-10 left-10 h-32 w-32 text-white/5" />
-      </motion.div>
-
-      <div className="container-page relative z-10 py-20 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-sm">
-            <span className="h-2 w-2 rounded-full bg-brand-secondary" />
-            Trusted Visa Experts Since 2015
-          </span>
-        </motion.div>
-
-        <motion.h1
-          className="mx-auto mt-6 max-w-4xl font-display text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl lg:text-7xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          Your Journey to the World{" "}
-          <span className="text-brand-secondary">Starts Here</span>
-        </motion.h1>
-
-        <motion.p
-          className="mx-auto mt-6 max-w-2xl text-lg text-white/80 sm:text-xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-        >
-          Zayan Travels — Expert visa consulting for 50+ countries. Fast
-          processing, expert guidance, and a high success rate.
-        </motion.p>
-
-        <motion.div
-          className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-        >
-          <Link href="/services">
-            <Button size="lg" className="w-full sm:w-auto">
-              Explore Services
-            </Button>
-          </Link>
-          <Link href="/contact">
-            <Button
-              size="lg"
-              variant="outline"
-              className="w-full border-white/30 bg-transparent text-white hover:bg-white/10 sm:w-auto"
-            >
-              Contact Us
-            </Button>
-          </Link>
-        </motion.div>
-
-        <motion.div
-          className="mt-16 flex items-center justify-center gap-8 text-white/70"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 1 }}
-        >
-          <div className="text-center">
-            <p className="font-display text-3xl font-bold text-white">50+</p>
-            <p className="mt-1 text-sm">Countries</p>
-          </div>
-          <div className="h-12 w-px bg-white/20" />
-          <div className="text-center">
-            <p className="font-display text-3xl font-bold text-white">10K+</p>
-            <p className="mt-1 text-sm">Visas Processed</p>
-          </div>
-          <div className="h-12 w-px bg-white/20" />
-          <div className="text-center">
-            <p className="font-display text-3xl font-bold text-white">98%</p>
-            <p className="mt-1 text-sm">Success Rate</p>
-          </div>
-        </motion.div>
-      </div>
-
-      <motion.a
-        href="#why-choose-us"
-        className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 text-white/60 transition-colors hover:text-white"
-        aria-label="Scroll down"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 1.2 }}
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        >
-          <ChevronDown className="h-8 w-8" />
-        </motion.div>
-      </motion.a>
-    </section>
-  );
+  const { scrollY } = useScroll();
+  const imageY = useTransform(scrollY, [0, 700], [0, 140]);
+  return <section className="relative flex min-h-screen items-end overflow-hidden bg-brand-dark pb-20 pt-32 sm:pb-28">
+    <HeroDepth>
+      <motion.div style={{ y: imageY }} className="absolute inset-0 -top-24 bg-[url('/images/zayan-hero.png')] bg-cover bg-center" aria-hidden="true" />
+    </HeroDepth>
+    <div className="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/75 to-brand-dark/20" /><div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-brand-dark/30" /><div className="film-grain pointer-events-none absolute inset-0 opacity-30" />
+    <div className="container-page relative z-10 w-full"><motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .8 }} className="max-w-4xl"><p className="eyebrow mb-6">Visa consultancy · Est. 2015</p><h1 className="max-w-4xl text-balance text-6xl font-medium leading-[.9] text-brand-secondary sm:text-8xl lg:text-[8.5rem]">Go further.<br /><em className="text-brand-primary">We&apos;ll handle the rest.</em></h1><p className="mt-8 max-w-lg text-base leading-relaxed text-brand-secondary/70 sm:text-lg">Expert visa guidance for the journeys that change everything. From first document to final departure.</p><div className="mt-9 flex flex-wrap items-center gap-4"><Link href="/services"><Button size="lg" className="rounded-none bg-brand-primary px-7 text-brand-dark hover:bg-brand-secondary">Explore services <ArrowRight data-icon="inline-end" /></Button></Link><Link href="/contact" className="border-b border-brand-secondary/40 pb-2 text-xs uppercase tracking-[0.2em] text-brand-secondary transition-colors hover:border-brand-primary hover:text-brand-primary">Start a conversation</Link></div></motion.div><div className="mt-20 flex items-end justify-between border-t border-brand-secondary/20 pt-5 text-xs uppercase tracking-[0.18em] text-brand-secondary/60"><span>50+ countries</span><span className="hidden sm:inline">10k+ journeys made possible</span><span>Scroll to discover <ArrowDown className="ml-2 inline size-4 text-brand-primary" /></span></div></div>
+  </section>;
 }
