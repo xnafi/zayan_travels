@@ -90,7 +90,7 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="fullName"
-            className="mb-2 block text-sm font-medium text-brand-dark"
+            className="mb-2 block text-sm font-medium text-brand-secondary"
           >
             Full Name
           </label>
@@ -110,7 +110,7 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="email"
-            className="mb-2 block text-sm font-medium text-brand-dark"
+            className="mb-2 block text-sm font-medium text-brand-secondary"
           >
             Email
           </label>
@@ -133,7 +133,7 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="phone"
-            className="mb-2 block text-sm font-medium text-brand-dark"
+            className="mb-2 block text-sm font-medium text-brand-secondary"
           >
             Phone
           </label>
@@ -154,7 +154,7 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="destinationCountry"
-            className="mb-2 block text-sm font-medium text-brand-dark"
+            className="mb-2 block text-sm font-medium text-brand-secondary"
           >
             Country of Destination
           </label>
@@ -175,7 +175,7 @@ export function ContactForm() {
       <div>
         <label
           htmlFor="message"
-          className="mb-2 block text-sm font-medium text-brand-dark"
+          className="mb-2 block text-sm font-medium text-brand-secondary"
         >
           Message
         </label>
@@ -183,7 +183,7 @@ export function ContactForm() {
           id="message"
           rows={5}
           placeholder="Tell us about your visa requirements..."
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-brand-dark placeholder:text-brand-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:border-brand-primary"
+          className="w-full rounded-lg border border-brand-line bg-brand-dark px-3 py-2 text-sm text-brand-secondary placeholder:text-brand-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:border-brand-primary"
           aria-invalid={!!errors.message}
           {...register("message")}
         />

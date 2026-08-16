@@ -43,7 +43,7 @@ const stats = [
 
 export default function AboutPage() {
   return (
-    <div className="bg-white">
+    <div className="bg-brand-dark">
       <section className="bg-gradient-to-br from-brand-primary to-brand-dark py-20 text-white">
         <div className="container-page text-center">
           <h1 className="font-display text-4xl font-bold sm:text-5xl">
@@ -60,7 +60,7 @@ export default function AboutPage() {
         <div className="container-page">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div>
-              <h2 className="font-display text-3xl font-bold text-brand-dark">
+              <h2 className="font-display text-3xl font-bold text-brand-secondary">
                 Our Story
               </h2>
               <p className="mt-4 text-lg text-brand-muted">
@@ -81,10 +81,10 @@ export default function AboutPage() {
               {stats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-xl border border-slate-200 bg-brand-surface p-6 text-center"
+                  className="rounded-xl border border-brand-line bg-brand-surface p-6 text-center"
                 >
                   <stat.icon className="mx-auto h-8 w-8 text-brand-primary" />
-                  <p className="mt-3 font-display text-3xl font-bold text-brand-dark">
+                  <p className="mt-3 font-display text-3xl font-bold text-brand-secondary">
                     {stat.value}
                   </p>
                   <p className="mt-1 text-sm text-brand-muted">{stat.label}</p>
@@ -98,7 +98,7 @@ export default function AboutPage() {
       <section className="bg-brand-surface py-20">
         <div className="container-page">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="font-display text-3xl font-bold text-brand-dark">
+            <h2 className="font-display text-3xl font-bold text-brand-secondary">
               Our Mission
             </h2>
             <p className="mt-4 text-lg text-brand-muted">
@@ -114,7 +114,7 @@ export default function AboutPage() {
       <section className="py-20">
         <div className="container-page">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="font-display text-3xl font-bold text-brand-dark">
+            <h2 className="font-display text-3xl font-bold text-brand-secondary">
               Meet Our <span className="text-brand-primary">Team</span>
             </h2>
             <p className="mt-4 text-lg text-brand-muted">
@@ -126,14 +126,14 @@ export default function AboutPage() {
             {teamMembers.map((member) => (
               <div
                 key={member.name}
-                className="rounded-xl border border-slate-200 bg-white p-6 text-center shadow-sm"
+                className="rounded-xl border border-brand-line bg-brand-surface p-6 text-center shadow-sm"
               >
                 <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-brand-primary/10">
                   <span className="font-display text-2xl font-bold text-brand-primary">
                     {member.avatar}
                   </span>
                 </div>
-                <h3 className="mt-4 font-display text-lg font-semibold text-brand-dark">
+                <h3 className="mt-4 font-display text-lg font-semibold text-brand-secondary">
                   {member.name}
                 </h3>
                 <p className="text-sm font-medium text-brand-primary">

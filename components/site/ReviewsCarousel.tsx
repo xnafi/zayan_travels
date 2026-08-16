@@ -26,10 +26,10 @@ export function ReviewsCarousel({
   const doubledReviews = [...reviews, ...reviews];
 
   return (
-    <section className="bg-white py-20">
+    <section className="bg-brand-dark py-20">
       <div className="container-page">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl font-bold text-brand-dark sm:text-4xl">
+          <h2 className="font-display text-3xl font-bold text-brand-secondary sm:text-4xl">
             What Our <span className="text-brand-primary">Clients Say</span>
           </h2>
           <div className="mt-4 flex items-center justify-center gap-2">
@@ -40,7 +40,7 @@ export function ReviewsCarousel({
                   className={`h-5 w-5 ${
                     i < Math.round(rating)
                       ? "fill-brand-secondary text-brand-secondary"
-                      : "fill-slate-200 text-slate-200"
+                      : "fill-brand-line text-brand-line"
                   }`}
                 />
               ))}
@@ -76,14 +76,14 @@ export function ReviewsCarousel({
                       className={`h-4 w-4 ${
                         i < review.rating
                           ? "fill-brand-secondary text-brand-secondary"
-                          : "fill-slate-200 text-slate-200"
+                          : "fill-brand-line text-brand-line"
                       }`}
                     />
                   ))}
                 </div>
                 <div className="mt-4 flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-brand-dark">
+                    <p className="text-sm font-semibold text-brand-secondary">
                       {review.authorName}
                     </p>
                     <p className="text-xs text-brand-muted">
@@ -98,7 +98,7 @@ export function ReviewsCarousel({
 
         <div className="mt-8 flex items-center justify-center gap-2">
           <span className="text-sm text-brand-muted">Powered by</span>
-          <span className="font-display text-sm font-semibold text-brand-dark">
+          <span className="font-display text-sm font-semibold text-brand-secondary">
             Google
           </span>
         </div>

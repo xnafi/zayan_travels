@@ -64,7 +64,7 @@ export default async function ServicesPage() {
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-brand-primary/10 transition-colors group-hover:bg-brand-primary">
                     <Icon className="h-6 w-6 text-brand-primary transition-colors group-hover:text-white" />
                   </div>
-                  <h2 className="mt-4 font-display text-lg font-semibold text-brand-dark">
+                  <h2 className="mt-4 font-display text-lg font-semibold text-brand-secondary">
                     {service.title}
                   </h2>
                   <p className="mt-2 flex-1 text-sm text-brand-muted">
@@ -82,8 +82,8 @@ export default async function ServicesPage() {
             })}
           </div>
 
-          <div className="mt-16 rounded-xl bg-white p-8 text-center shadow-sm">
-            <h2 className="font-display text-2xl font-bold text-brand-dark">
+          <div className="mt-16 rounded-xl border border-brand-line bg-brand-dark p-8 text-center shadow-sm">
+            <h2 className="font-display text-2xl font-bold text-brand-secondary">
               Need a Custom Solution?
             </h2>
             <p className="mx-auto mt-2 max-w-xl text-brand-muted">
