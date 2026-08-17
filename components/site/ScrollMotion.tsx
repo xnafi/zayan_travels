@@ -17,15 +17,23 @@ export function ScrollReveal({
   const ref = React.useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.16, margin: "0px 0px -8%" });
   const reducedMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = React.useState(false);
+  React.useEffect(() => {
+    const media = window.matchMedia("(max-width: 640px)");
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
   const offsets = { up: 42, down: -42, left: 42, right: -42 };
-  const axis = direction === "left" || direction === "right" ? "x" : "y";
-  const offset = offsets[direction];
+  const axis = "y";
+  const offset = direction === "left" || direction === "right" ? 28 : offsets[direction];
 
   return (
     <motion.div
       ref={ref}
-      className={className}
-      initial={{ opacity: 0, [axis]: reducedMotion ? 0 : offset, filter: reducedMotion ? "blur(0px)" : "blur(8px)" }}
+      className={`min-w-0 max-w-full overflow-x-clip ${className ?? ""}`}
+      initial={{ opacity: 0, [axis]: reducedMotion || (isMobile && axis === "x") ? 0 : offset, filter: reducedMotion ? "blur(0px)" : "blur(8px)" }}
       animate={isInView ? { opacity: 1, [axis]: 0, filter: "blur(0px)" } : undefined}
       transition={{ duration: reducedMotion ? 0.01 : 0.85, delay: reducedMotion ? 0 : delay, ease: [0.22, 1, 0.36, 1] }}
     >
@@ -54,5 +62,5 @@ export function HeroDepth({ children }: { children: React.ReactNode }) {
   const scale = useTransform(scrollY, [0, 800], [1, reducedMotion ? 1 : 1.08]);
   const opacity = useTransform(scrollY, [0, 550], [1, 0.35]);
 
-  return <motion.div style={{ y, scale, opacity }}>{children}</motion.div>;
+  return <motion.div className="max-w-full overflow-x-clip" style={{ y, scale, opacity }}>{children}</motion.div>;
 }
