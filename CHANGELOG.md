@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/xnafi/zayan_travels/compare/v1.2.0...v1.3.0) (2026-08-17)
+
+
+### Features
+
+* adjust container styles and mobile overflow handling ([e6c2922](https://github.com/xnafi/zayan_travels/commit/e6c29229f82c068c75837cfde0e55b935825fc1e))
+
 # [1.2.0](https://github.com/xnafi/zayan_travels/compare/v1.1.0...v1.2.0) (2026-08-16)
 
 
