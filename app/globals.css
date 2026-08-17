@@ -28,7 +28,7 @@
 }
 
 @layer components {
-  .container-page { @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12; }
+  .container-page { @apply mx-auto w-full min-w-0 max-w-7xl px-5 sm:px-8 lg:px-12; }
   .cinematic-section { @apply relative overflow-hidden bg-brand-dark; }
   .eyebrow { @apply font-body text-[11px] font-semibold uppercase tracking-[0.28em] text-brand-primary; }
   .film-grain { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.14'/%3E%3C/svg%3E"); mix-blend-mode: screen; }
@@ -48,5 +48,10 @@
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
- body { overflow-x: hidden; }
-  
+body { overflow-x: clip; }
+
+@media (max-width: 640px) {
+  .container-page { padding-inline: 1rem; }
+  h1, h2, h3, h4, h5, h6 { overflow-wrap: anywhere; }
+}
+
